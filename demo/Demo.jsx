@@ -17,13 +17,8 @@ export default class Demo extends React.Component {
   		// console.log(mappedColor);
   	}
     return (
-    	<div>
-		    <div style={style}>
-		    	<ReactGradientColorPicker onChange={onChangeCallback} stops={stops}/>
-		    </div>
-		    <div style={style}>
-		    	<ReactGradientColorPicker onChange={onChangeCallback} stops={stops}/>
-		    </div>
+    	<div style={style}>
+	    	<ReactGradientColorPicker onChange={onChangeCallback} stops={stops}/>
 	    </div>
     );
   }
