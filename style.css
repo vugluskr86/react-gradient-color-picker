@@ -7,7 +7,7 @@
 	position: relative;
 }
 
-#gc-canvas {
+.gc-canvas {
 	width: 100%;
 	height: 20px;
 	background-color: white;

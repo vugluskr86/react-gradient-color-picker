@@ -19,6 +19,9 @@ const DefaultStops = [
 const CompareOffset = function CompareOffset(a, b) {
 	return a.offset - b.offset;
 };
+const ColorPickerID = function ColorPickerID(containerID, idx) {
+	return containerID+'_gc-cp_'+idx;
+}
 
 class ReactGradientColorPicker extends React.Component {
 
@@ -28,6 +31,9 @@ class ReactGradientColorPicker extends React.Component {
     // TODO: how to get auto-expanded width
     var rootHeight = Height;
     var rootWidth = Width;
+
+    // TODO: not sure this is correct to generate random ID
+    this.containerID = _.uniqueId('gc-canvas_');
 
     // init canvas instance 
     this.svg = null;
@@ -68,14 +74,16 @@ class ReactGradientColorPicker extends React.Component {
   	this.setState({stops: newStops});
 
   	// notify change
-  	this.props.onChange(this.colorScale);
+  	if (this.props.onChange) {
+  		this.props.onChange(this.colorScale);	
+  	}
   }
 
-  dragHandler(d, mouseX) {
+  dragHandler(d, mouseX, colorPickerID) {
   	// only update handler position but not state
   	d.x = mouseX;
   	d3.select(this).attr('x', mouseX);
-  	d3.select('#gc-cp' + d.idx)
+  	d3.select('#' + colorPickerID)
   		.style('left', (d.x - ColorPickerWidth / 2) + 'px')
   		.style('top', Height + 'px');
   }
@@ -89,7 +97,9 @@ class ReactGradientColorPicker extends React.Component {
     this.setState({stops: newStops});
 
     // notify change
-    this.props.onChange(this.colorScale);
+    if (this.props.onChange) {
+  		this.props.onChange(this.colorScale);	
+  	}
   }
 
   componentDidMount() {
@@ -112,7 +122,7 @@ class ReactGradientColorPicker extends React.Component {
   	};
 
   	// init canvas
-  	this.svg = d3.select('#gc-canvas')
+  	this.svg = d3.select('#' + this.containerID)
   		.append('svg')
   		.attr('width', this.state.rootWidth)
   		.attr('height', this.state.rootHeight);
@@ -184,7 +194,7 @@ class ReactGradientColorPicker extends React.Component {
   	var dragCallback = function dragCallback(d) {
   		var newX = d3.event.x;
 	  	if (newX >= 0 && newX <= self.state.rootWidth) {
-		  	self.dragHandler.call(this, d, newX);
+		  	self.dragHandler.call(this, d, newX, ColorPickerID(self.containerID, d.idx));
 	  	}
   	}
   	var drag = d3.behavior.drag()
@@ -198,7 +208,7 @@ class ReactGradientColorPicker extends React.Component {
     		return d.x - HandlerWidth / 2;
     	}.bind(this))
     	.attr('y', '0')
-    	.attr('width', '4')
+    	.attr('width', HandlerWidth)
     	.attr('height', this.state.rootHeight)
     	.call(drag);
 
@@ -213,10 +223,10 @@ class ReactGradientColorPicker extends React.Component {
 
     // refresh the color pickers
     this.state.stops.forEach(function iterator(s) {
-    	d3.select('#gc-cp'+s.idx)
+    	d3.select('#' + ColorPickerID(this.containerID, s.idx))
     		.style('left', (s.x - ColorPickerWidth / 2) + 'px')
     		.style('top', Height + 'px');
-    });
+    }.bind(this));
 
     // refresh color scale
     var stops = this.state.stops.map(function iterator(s) {
@@ -240,10 +250,14 @@ class ReactGradientColorPicker extends React.Component {
 	  	var currentHandler = _.find(newStops, { 'idx': idx });
 	  	currentHandler.color = color;
 	    this.setState({stops: newStops});
-	    this.props.onChange(this.colorScale);
+
+	    // notify change
+	    if (this.props.onChange) {
+	  		this.props.onChange(this.colorScale);	
+	  	}
   	}.bind(this);
   	var colorpickers = this.state.stops.map(function iterator(s) {
-  		let pickerId = 'gc-cp'+s.idx;
+  		let pickerId = ColorPickerID(this.containerID, s.idx);
   		let callback = function callback(c) {
   			colorChangeCallback(c.color, s.idx);
   		};
@@ -260,7 +274,7 @@ class ReactGradientColorPicker extends React.Component {
     return (
 	    <div className="gc-container" ref="root">
 	    	{colorpickers}
-	    	<div id="gc-canvas"></div>
+	    	<div className="gc-canvas" id={this.containerID}></div>
 	    </div>
     );
   }
