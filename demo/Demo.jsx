@@ -12,7 +12,8 @@ export default class Demo extends React.Component {
       {offset: 1.0, color: '#0f0'}
   	];
   	var onChangeCallback = function onChangeCallback(colorMap) {
-  		console.log(colorMap);
+  		// var mappedColor = colorMap(0.8);
+  		// console.log(mappedColor);
   	}
     return (
 	    <div style={style}>
