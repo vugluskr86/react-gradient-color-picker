@@ -3,9 +3,20 @@ import ReactGradientColorPicker from '../src/index'
 
 export default class Demo extends React.Component {
   render() {
+  	var style = {
+  		width: '300px'
+  	};
+  	var stops = [
+  		{offset: 0.0, color: '#f00'},
+      {offset: 0.5, color: '#fff'},
+      {offset: 1.0, color: '#0f0'}
+  	];
+  	var onChangeCallback = function onChangeCallback(colorMap) {
+  		console.log(colorMap);
+  	}
     return (
-	    <div >
-	    	<ReactGradientColorPicker />
+	    <div style={style}>
+	    	<ReactGradientColorPicker onChange={onChangeCallback} stops={stops}/>
 	    </div>
     );
   }
