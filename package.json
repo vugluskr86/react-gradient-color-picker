@@ -21,7 +21,11 @@
   },
   "main": "dist-modules",
   "dependencies": {
+    "d3": "^3.5.12",
+    "debounce": "^1.0.0",
+    "lodash": "^3.10.1",
     "react": "^0.14.0",
+    "react-colors-picker": "^2.3.0",
     "react-dom": "^0.14.0"
   },
   "devDependencies": {
