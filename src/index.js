@@ -31,6 +31,10 @@ class ReactGradientColorPicker extends React.Component {
     // TODO: how to get auto-expanded width
     var rootHeight = Height;
     var rootWidth = Width;
+    if (this.props.width) {
+    	rootWidth = this.props.width;
+    	console.log(this.props.width);
+    }
 
     // TODO: not sure this is correct to generate random ID
     this.containerID = _.uniqueId('gc-canvas_');
@@ -104,7 +108,11 @@ class ReactGradientColorPicker extends React.Component {
 
   componentDidMount() {
   	// try to get the auto-expanded comonent width
+
   	var rootWidth = this.refs.root.offsetWidth;
+  	if (this.props.width) {
+  		rootWidth = this.props.width;
+  	}
   	var newStops = _.cloneDeep(this.state.stops);
   	newStops.forEach(function iterator(d) {
   		d.x = d.offset * rootWidth;
@@ -126,9 +134,9 @@ class ReactGradientColorPicker extends React.Component {
   		.append('svg')
   		.attr('width', this.state.rootWidth)
   		.attr('height', this.state.rootHeight);
-
+  	var gradientID = this.containerID + '_gc-gradient';
   	this.gradient = this.svg.append('linearGradient')
-      .attr('id', 'gc-gradient')
+      .attr('id', gradientID)
       .attr('gradientUnits', 'userSpaceOnUse')
       .attr('y1', '0')
 	    .attr('y2', '0')
@@ -141,7 +149,7 @@ class ReactGradientColorPicker extends React.Component {
     	.attr('y', 0)
     	.attr('width', this.state.rootWidth)
     	.attr('height', this.state.rootHeight)
-    	.attr('fill', 'url(#gc-gradient)')
+    	.attr('fill', 'url(#' + gradientID + ')')
     	.on('click', clickColorMap);
   }
 
@@ -158,7 +166,8 @@ class ReactGradientColorPicker extends React.Component {
   		.attr('height', this.state.rootHeight);
 
   	// refresh gradient
-  	this.gradient = this.svg.select('#gc-gradient')
+  	var gradientID = this.containerID + '_gc-gradient';
+  	this.gradient = this.svg.select('#' + gradientID)
   		.attr('x2', this.state.rootWidth)
 	  	.selectAll('stop')
       .data(this.state.stops);
@@ -282,7 +291,8 @@ class ReactGradientColorPicker extends React.Component {
 
 ReactGradientColorPicker.propTypes = {
 	stops: React.PropTypes.arrayOf(React.PropTypes.object),
-	onChange: React.PropTypes.func
+	onChange: React.PropTypes.func,
+	width: React.PropTypes.number
 };
 
 module.exports = ReactGradientColorPicker;

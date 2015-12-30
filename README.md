@@ -34,6 +34,9 @@ Callback called on every value change.
 The return value is a d3 linear color scale. Input value range is between 0 to 1. 
 It only triggers when the stop color changes or end of dragging the handlers.
 
+### width {number}
+The width of the component.
+
 ## Highlighting Demo
 
 ```js
