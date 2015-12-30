@@ -1,5 +1,10 @@
 'use strict';
+import React from 'react';
 
-// this should be the entry point to your library
-module.exports = {};
+class ReactGradientColorPicker extends React.Component {
+  render() {
+    return <div >my Component</div>;
+  }
+}
 
+module.exports = ReactGradientColorPicker;

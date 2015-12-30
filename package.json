@@ -1,9 +1,9 @@
 {
-  "name": "react-component-boilerplate",
-  "description": "Boilerplate for React.js components",
-  "author": "Juho Vepsalainen",
-  "user": "survivejs",
-  "version": "2.0.5",
+  "name": "react-gradient-color-picker",
+  "description": "react gradient color picker",
+  "author": "Javid Hsueh",
+  "user": "javidhsueh",
+  "version": "0.0.1",
   "scripts": {
     "start": "webpack-dev-server",
     "test": "karma start",
@@ -73,16 +73,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/survivejs/react-component-boilerplate.git"
+    "url": "https://github.com/javidhsueh/react-gradient-color-picker.git"
   },
-  "homepage": "https://survivejs.github.io/react-component-boilerplate/",
+  "homepage": "https://javidhsueh.github.io/react-gradient-color-picker/",
   "bugs": {
-    "url": "https://github.com/survivejs/react-component-boilerplate/issues"
+    "url": "https://github.com/javidhsueh/react-gradient-color-picker/issues"
   },
   "keywords": [
     "react",
     "reactjs",
-    "boilerplate"
+    "color",
+    "picker",
+    "gradient"
   ],
   "license": "MIT",
   "pre-push": [

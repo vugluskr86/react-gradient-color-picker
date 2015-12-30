@@ -1,10 +1,11 @@
 import React from 'react';
+import ReactGradientColorPicker from '../src/index'
 
 export default class Demo extends React.Component {
   render() {
-    return <div onClick={this.easterEgg}>click me</div>;
+    return <div >
+    	<ReactGradientColorPicker />
+    </div>;
   }
-  easterEgg() {
-    alert('easter egg');
-  }
+  
 }

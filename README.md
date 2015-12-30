@@ -1,5 +1,5 @@
 [![build status](https://secure.travis-ci.org/survivejs/react-component-boilerplate.png)](http://travis-ci.org/survivejs/react-component-boilerplate) [![bitHound Score](https://www.bithound.io/github/survivejs/react-component-boilerplate/badges/score.svg)](https://www.bithound.io/github/survivejs/react-component-boilerplate) [![Dependency Status](https://david-dm.org/survivejs/react-component-boilerplate.svg)](https://david-dm.org/survivejs/react-component-boilerplate)
-# react-component-boilerplate - Boilerplate for React.js components
+# react-gradient-color-picker
 
 This is a simple boilerplate that has been developed to make it easier to develop React components and small projects. Check out [SurviveJS - Webpack and React](http://survivejs.com/) to dig deeper into the topic.
 
@@ -27,5 +27,5 @@ console.log(a + b);
 
 ## License
 
-*react-component-boilerplate* is available under MIT. See LICENSE for more details.
+*react-gradient-color-picker* is available under MIT. See LICENSE for more details.
 
