@@ -3,6 +3,9 @@
 
 This is a simple gradient color picker integrated with react. 
 The reason I decide to develop it since there's no usable gradient color picker on npm so far (2015/12/30). Please join me to make it better and more useful.
+Please checkout the example at [here](https://www.npmjs.com/package/react-gradient-color-picker).
+
+![Alt text](screenshot.png "Optional title")
 
 ## Development
 
