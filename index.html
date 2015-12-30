@@ -2,39 +2,60 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>react-component-boilerplate - Boilerplate for React.js components</title>
+    <title>react-gradient-color-picker - react gradient color picker</title>
     
     
-    <link href="styles.16b4d5adae20947dc029.css" rel="stylesheet">
+    <link href="styles.9e5f375ee277d2243b45.css" rel="stylesheet">
     
   </head>
   <body>
     <div class="pure-g">
       <header class="pure-u-1">
-        <h1>react-component-boilerplate</h1>
+        <h1>react-gradient-color-picker</h1>
 
-        <div class="description">Boilerplate for React.js components</div>
+        <div class="description">react gradient color picker</div>
       </header>
 
       <article class="pure-u-1">
         <h2>Demonstration</h2>
-        <section class="demonstration"><div data-reactid=".klftw4u39c" data-react-checksum="-1861706567"><div class="right github-fork-ribbon-wrapper" data-reactid=".klftw4u39c.0"><div class="github-fork-ribbon" data-reactid=".klftw4u39c.0.0"><a href="https://github.com/survivejs/react-component-boilerplate" data-reactid=".klftw4u39c.0.0.0">Fork me on GitHub</a></div></div><p data-reactid=".klftw4u39c.1">Just demonstrating the awesomeness of this boilerplate here.</p><div data-reactid=".klftw4u39c.2">click me</div></div></section>
+        <section class="demonstration"><div data-reactid=".13n5dhev8qo" data-react-checksum="607651309"><div class="right github-fork-ribbon-wrapper" data-reactid=".13n5dhev8qo.0"><div class="github-fork-ribbon" data-reactid=".13n5dhev8qo.0.0"><a href="https://github.com/javidhsueh/react-gradient-color-picker" data-reactid=".13n5dhev8qo.0.0.0">Fork me on GitHub</a></div></div><div style="width:300px;" data-reactid=".13n5dhev8qo.1"><div class="gc-container" data-reactid=".13n5dhev8qo.1.0"><div class="gc-colorpicker" id="gc-cp0" style="left:-8px;top:15px;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp0"><span class="react-colorpicker" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp0.0"><span class="react-colorpicker-trigger" unselectable="true" style="opacity:1;background-color:#f00;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp0.0.0"></span></span></div><div class="gc-colorpicker" id="gc-cp1" style="left:142px;top:15px;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp1"><span class="react-colorpicker" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp1.0"><span class="react-colorpicker-trigger" unselectable="true" style="opacity:1;background-color:#fff;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp1.0.0"></span></span></div><div class="gc-colorpicker" id="gc-cp2" style="left:292px;top:15px;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp2"><span class="react-colorpicker" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp2.0"><span class="react-colorpicker-trigger" unselectable="true" style="opacity:1;background-color:#0f0;" data-reactid=".13n5dhev8qo.1.0.0:$gc-cp2.0.0"></span></span></div><div id="gc-canvas" data-reactid=".13n5dhev8qo.1.0.1"></div></div></div></div></section>
 
         <h2>Documentation</h2>
-        <section class="documentation"><div><p><a href="http://travis-ci.org/survivejs/react-component-boilerplate" target="new"><img src="https://secure.travis-ci.org/survivejs/react-component-boilerplate.png"/></a> <a href="https://www.bithound.io/github/survivejs/react-component-boilerplate" target="new"><img src="https://www.bithound.io/github/survivejs/react-component-boilerplate/badges/score.svg"/></a> <a href="https://david-dm.org/survivejs/react-component-boilerplate" target="new"><img src="https://david-dm.org/survivejs/react-component-boilerplate.svg"/></a></p><h1 id="react-component-boilerplate---boilerplate-for-react.js-components">react-component-boilerplate - Boilerplate for React.js components</h1><p>This is a simple boilerplate that has been developed to make it easier to develop React components and small projects. Check out <a href="http://survivejs.com/" target="new">SurviveJS - Webpack and React</a> to dig deeper into the topic.</p><h2 id="basic-usage">Basic Usage</h2><p>If you want to replace project meta information (author etc.), consider using a tool like <a href="https://www.npmjs.com/package/replace-project-meta" target="new">replace-project-meta</a>.</p><ul><li>Linting - <strong>npm run lint</strong> - Runs ESLint.</li><li>Testing - <strong>npm test</strong> and <strong>npm run tdd</strong> - Runs Karma/Mocha/Chai/Phantom. Code coverage report is generated through istanbul/isparta to <code>build/</code>.</li><li>Developing - <strong>npm start</strong> - Runs the development server at <em>localhost:8080</em> and use Hot Module Replacement. You can override the default host and port through env (<code>HOST</code>, <code>PORT</code>).</li><li>Creating a version - <strong>npm version &lt;x.y.&lt;&gt;</strong> - Updates <em>/dist</em> and <em>package.json</em> with the new version and create a version tag to Git.</li><li>Publishing a version - <strong>npm publish</strong> - Pushes a new version to npm and updates the project site.</li></ul><p>If you don’t want to use universal rendering for the React portion, set <code>RENDER_UNIVERSAL</code> to <code>false</code> at <em>webpack.config.babel.js</em>.</p><h2 id="highlighting-demo">Highlighting Demo</h2><pre><code><span class="hljs-keyword">var</span> a = <span class="hljs-number">5</span>;
-<span class="hljs-keyword">var</span> b = <span class="hljs-number">10</span>;
-
-<span class="hljs-comment">// just trying out code highlighting feature here</span>
-<span class="hljs-built_in">console</span>.log(a + b);</code></pre><h2 id="license">License</h2><p><em>react-component-boilerplate</em> is available under MIT. See LICENSE for more details.</p></div></section>
+        <section class="documentation"><div><p><a href="http://travis-ci.org/survivejs/react-component-boilerplate" target="new"><img src="https://secure.travis-ci.org/survivejs/react-component-boilerplate.png"/></a> <a href="https://www.bithound.io/github/survivejs/react-component-boilerplate" target="new"><img src="https://www.bithound.io/github/survivejs/react-component-boilerplate/badges/score.svg"/></a> <a href="https://david-dm.org/survivejs/react-component-boilerplate" target="new"><img src="https://david-dm.org/survivejs/react-component-boilerplate.svg"/></a></p><h1 id="react-gradient-color-picker">react-gradient-color-picker</h1><p>This is a simple gradient color picker integrated with react. 
+The reason I decide to develop it since there’s no usable gradient color picker on npm so far (2015/12/30). Please join me to make it better and more useful.</p><h2 id="development">Development</h2><p>Please checkout the code at <a href="https://github.com/javidhsueh/react-gradient-color-picker" target="new">here</a>.</p><ul><li>Linting - <strong>npm run lint</strong> - Runs ESLint.</li><li>Testing - <strong>npm test</strong> and <strong>npm run tdd</strong> - Runs Karma/Mocha/Chai/Phantom. Code coverage report is generated through istanbul/isparta to <code>build/</code>.</li><li>Developing - <strong>npm start</strong> - Runs the development server at <em>localhost:8080</em> and use Hot Module Replacement. You can override the default host and port through env (<code>HOST</code>, <code>PORT</code>).</li></ul><h2 id="installation">Installation</h2><pre><code>npm install --save react-gradient-color-picker</code></pre><h2 id="properties">Properties</h2><h3 id="stops-{array}-default:">stops {array} default:</h3><pre><code>[
+    {offset: <span class="hljs-number">0.0</span>, color: <span class="hljs-string">'#f00'</span>},
+    {offset: <span class="hljs-number">0.5</span>, color: <span class="hljs-string">'#fff'</span>},
+    {offset: <span class="hljs-number">1.0</span>, color: <span class="hljs-string">'#0f0'</span>}
+]</code></pre><p>The color stops of the color map.</p><h3 id="onchange-{func}">onChange {func}</h3><p>Callback called on every value change.
+The return value is a d3 linear color scale. Input value range is between 0 to 1. 
+It only triggers when the stop color changes or end of dragging the handlers.</p><h2 id="highlighting-demo">Highlighting Demo</h2><pre><code>render() {
+    <span class="hljs-keyword">var</span> style = {
+        width: <span class="hljs-string">'300px'</span>
+    };
+    <span class="hljs-keyword">var</span> stops = [
+        {offset: <span class="hljs-number">0.0</span>, color: <span class="hljs-string">'#f00'</span>},
+        {offset: <span class="hljs-number">0.5</span>, color: <span class="hljs-string">'#fff'</span>},
+        {offset: <span class="hljs-number">1.0</span>, color: <span class="hljs-string">'#0f0'</span>}
+    ];
+    <span class="hljs-keyword">var</span> onChangeCallback = <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">onChangeCallback</span>(<span class="hljs-params">colorMap</span>) </span>{
+          <span class="hljs-comment">// var mappedColor = colorMap(0.8);</span>
+          <span class="hljs-comment">// console.log(mappedColor);</span>
+      }
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">style</span>=<span class="hljs-value">{style}</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-title">ReactGradientColorPicker</span> <span class="hljs-attribute">onChange</span>=<span class="hljs-value">{onChangeCallback}</span> <span class="hljs-attribute">stops</span>=<span class="hljs-value">{stops}</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+    )</span>;
+}</code></pre><h2 id="license">License</h2><p><em>react-gradient-color-picker</em> is available under MIT. See LICENSE for more details.</p></div></section>
       </article>
     </div>
 
     
-    <script src="manifest.41f10902d5229f336d45.js"></script>
+    <script src="manifest.2679ce96574f84a047ae.js"></script>
     
-    <script src="vendors.65799abbd43f47b2a997.js"></script>
+    <script src="vendors.0f2ba6e17681062fe8f1.js"></script>
     
-    <script src="app.16b4d5adae20947dc029.js"></script>
+    <script src="app.9e5f375ee277d2243b45.js"></script>
     
   </body>
 </html>
