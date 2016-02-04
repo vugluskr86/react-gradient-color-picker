@@ -9,10 +9,18 @@ const HandlerWidth = 4;
 const ColorPickerWidth = 16;
 const Width = 300;
 const Height = 15;
-const ColorMode = 'rgb';
+const DefaultColorSpace = 'HSL';
+
+const ColorSpaces = {
+  'HSL': d3.interpolateHsl,
+  'HCL': d3.interpolateHcl,
+  'Lab': d3.interpolateLab,
+  'RGB': d3.interpolateRgb
+};
+
 const DefaultStops = [
 	{offset: 0.0, color: '#00f'},
-  {offset: 0.5, color: '#aaa'},
+  {offset: 0.5, color: '#0f0'},
   {offset: 1.0, color: '#f00'}
 ];
 
@@ -33,38 +41,39 @@ class ReactGradientColorPicker extends React.Component {
     var rootWidth = Width;
     if (this.props.width) {
     	rootWidth = this.props.width;
-    	console.log(this.props.width);
     }
 
-    // TODO: not sure this is correct to generate random ID
     this.containerID = _.uniqueId('gc-canvas_');
-
-    // init canvas instance 
     this.svg = null;
-
-    // receive stops from props
     var defaultStops = this.props.stops || DefaultStops;
-
-    // populate color stop data
-    var stops = defaultStops.map(function iterator(d, idx) {
+    var stops = defaultStops.map( (stop, idx) => {
     	return {
     		idx: idx,
-    		x: rootWidth * d.offset,
-    		offset: d.offset,
-    		color: d.color
+    		x: rootWidth * stop.offset,
+    		offset: stop.offset,
+    		color: stop.color
     	}
     });
+
+    var initColorSpace = DefaultColorSpace;
+    if (this.props.colorSpace) {
+      if (ColorSpaces.hasOwnProperty(this.props.colorSpace)) {
+        initColorSpace = this.props.colorSpace  
+      } else {
+        console.error('Incorrect props: colorSpace should be one of [HSL,HCL,Lab,RGB]');
+      }
+    }
 
     // init state
     this.state = {
     	rootWidth: rootWidth,
     	rootHeight: rootHeight,
-      colorModel: ColorMode,
+      colorSpace: initColorSpace,
       stops: stops
     };
   }
 
-  addHandler(mouseX) {
+  _addHandler(mouseX) {
   	var offset = 1.0 * mouseX / this.state.rootWidth;
   	var midColor = this.colorScale(offset);
   	var newStop = {
@@ -77,13 +86,10 @@ class ReactGradientColorPicker extends React.Component {
   	newStops.sort(CompareOffset);
   	this.setState({stops: newStops});
 
-  	// notify change
-  	if (this.props.onChange) {
-  		this.props.onChange(this.colorScale);	
-  	}
+  	this._notifyChange();
   }
 
-  dragHandler(d, mouseX, colorPickerID) {
+  _dragHandler(d, mouseX, colorPickerID) {
   	// only update handler position but not state
   	d.x = mouseX;
   	d3.select(this).attr('x', mouseX);
@@ -92,7 +98,7 @@ class ReactGradientColorPicker extends React.Component {
   		.style('top', Height + 'px');
   }
 
-  dragHandlerEnd(d) {
+  _dragHandlerEnd(d) {
   	// when the end of drag, update the state once.
   	var newStops = _.cloneDeep(this.state.stops);
   	var currentHandler = _.find(newStops, { 'idx': d.idx });
@@ -100,23 +106,27 @@ class ReactGradientColorPicker extends React.Component {
   	currentHandler.x = d.x;
     this.setState({stops: newStops});
 
-    // notify change
+    this._notifyChange();
+  }
+
+  _notifyChange () {
     if (this.props.onChange) {
-  		this.props.onChange(this.colorScale);	
-  	}
+      this.props.onChange(this.state.stops, this.colorScale); 
+    }
   }
 
   componentDidMount() {
-  	// try to get the auto-expanded comonent width
-
+  	// TODO: get the auto-expanded comonent width
   	var rootWidth = this.refs.root.offsetWidth;
+    var rootHeight = this.state.rootHeight;
   	if (this.props.width) {
   		rootWidth = this.props.width;
   	}
-  	var newStops = _.cloneDeep(this.state.stops);
-  	newStops.forEach(function iterator(d) {
-  		d.x = d.offset * rootWidth;
-  	});
+    var newStops = this.state.stops.map( (stop) => {
+      stop.x = stop.offset * rootWidth;
+      return stop;
+    });
+
   	// TODO: this is anti-pattern. should fix it soon.
   	this.setState({
   		rootWidth: rootWidth,
@@ -124,51 +134,86 @@ class ReactGradientColorPicker extends React.Component {
   	});
 
   	var self = this;
-  	var clickColorMap = function clickColorMap() {
-  		var mouseX = d3.mouse(this)[0];
-  		self.addHandler(mouseX);
-  	};
-
   	// init canvas
+    this.canvas = d3.select('#' + this.containerID)
+      .append('canvas')
+      .attr('width', rootWidth)
+      .attr('height', 1)
+      .style('width', rootWidth + 'px')
+      .style('height', rootHeight + 'px');
+
   	this.svg = d3.select('#' + this.containerID)
   		.append('svg')
-  		.attr('width', this.state.rootWidth)
-  		.attr('height', this.state.rootHeight);
-  	var gradientID = this.containerID + '_gc-gradient';
-  	this.gradient = this.svg.append('linearGradient')
-      .attr('id', gradientID)
-      .attr('gradientUnits', 'userSpaceOnUse')
-      .attr('y1', '0')
-	    .attr('y2', '0')
-	    .attr('x1', '0')
-	    .attr('x2', this.state.rootWidth);
+  		.attr('width', rootWidth)
+  		.attr('height', rootHeight);
 
     this.colorMap = this.svg.append('rect')
     	.attr('id', 'gc-color-map')
     	.attr('x', 0)
     	.attr('y', 0)
-    	.attr('width', this.state.rootWidth)
-    	.attr('height', this.state.rootHeight)
-    	.attr('fill', 'url(#' + gradientID + ')')
-    	.on('click', clickColorMap);
+    	.attr('width', rootWidth)
+    	.attr('height', rootHeight)
+      .attr('fill', 'rgba(0,0,0,0)')
+    	.on('click', function clickColorMap() {
+        var mouseX = d3.mouse(this)[0];
+        self._addHandler(mouseX);
+      });
   }
 
-  refreshCanvas() {
+  _refreshCanvas() {
   	if (this.svg === null) {
   		return;
   	}
 
+    var rootWidth = this.state.rootWidth;
+    var rootHeight = this.state.rootHeight;
+
   	// refresh canvas size
-  	this.svg.attr('width', this.state.rootWidth)
-  		.attr('height', this.state.rootHeight);
+    this.canvas
+      .attr('width', this.state.rootWidth)
+      .attr('height', 1)
+      .style('width', this.state.rootWidth + 'px')
+      .style('height', this.state.rootHeight + 'px');
 
-  	this.colorMap.attr('width', this.state.rootWidth)
-  		.attr('height', this.state.rootHeight);
+  	this.svg.attr('width', rootWidth)
+  		.attr('height', rootHeight);
 
+    // refresh color scale
+    var stops = this.state.stops.map(function iterator(s) {
+      return {
+        offset: s.offset,
+        color: s.color
+      };
+    }).sort(CompareOffset);
+    var offsets = _.map(stops, 'offset');
+    var colors = _.map(stops, 'color');
+    this.colorScale = d3.scale.linear()
+      .domain(offsets)
+      .range(colors)
+      .interpolate(ColorSpaces[this.state.colorSpace]);
+
+    var _localColorScale = this.colorScale;
+
+  	this.colorMap
+      .attr('width', rootWidth)
+  		.attr('height', rootHeight);
+
+    this.canvas.each(function renderCanvas(d) {
+      var context = this.getContext('2d'),
+          image = context.createImageData(rootWidth, 1);
+      for (var i = 0, j = -1, c; i < rootWidth; ++i) {
+        c = d3.rgb(_localColorScale(i*1.0/rootWidth));
+        image.data[++j] = c.r;
+        image.data[++j] = c.g;
+        image.data[++j] = c.b;
+        image.data[++j] = 255;
+      }
+      context.putImageData(image, 0, 0);
+    })
   	// refresh gradient
   	var gradientID = this.containerID + '_gc-gradient';
   	this.gradient = this.svg.select('#' + gradientID)
-  		.attr('x2', this.state.rootWidth)
+  		.attr('x2', rootWidth)
 	  	.selectAll('stop')
       .data(this.state.stops);
 
@@ -183,14 +228,9 @@ class ReactGradientColorPicker extends React.Component {
       });
     // update existing stops
     this.gradient
-    	.attr('offset', function offsetAccessor(d) {
-      	return (d.offset * 100).toString()+'%';
-      })
-      .attr('stop-color', function colorAccessor(d) {
-      	return d.color;
-      });
+    	.attr('offset', (d) => (d.offset * 100).toString()+'%' )
+      .attr('stop-color', (d) => d.color );
 
-    // TODO: there's no remove handler function now.
     // remove non-exist stops
     this.gradient.exit().remove();
 
@@ -203,13 +243,14 @@ class ReactGradientColorPicker extends React.Component {
   	var dragCallback = function dragCallback(d) {
   		var newX = d3.event.x;
 	  	if (newX >= 0 && newX <= self.state.rootWidth) {
-		  	self.dragHandler.call(this, d, newX, ColorPickerID(self.containerID, d.idx));
+		  	self._dragHandler.call(this, d, newX, ColorPickerID(self.containerID, d.idx));
 	  	}
   	}
   	var drag = d3.behavior.drag()
 	    .origin(Object)
 	    .on('drag', dragCallback)
-	    .on('dragend', this.dragHandlerEnd.bind(this))
+	    .on('dragend', this._dragHandlerEnd.bind(this));
+
 		this.handlers.enter()
 			.append('rect')
     	.attr('class', 'gc-handler')
@@ -218,7 +259,7 @@ class ReactGradientColorPicker extends React.Component {
     	}.bind(this))
     	.attr('y', '0')
     	.attr('width', HandlerWidth)
-    	.attr('height', this.state.rootHeight)
+    	.attr('height', rootHeight)
     	.call(drag);
 
     // update existing handlers
@@ -237,22 +278,10 @@ class ReactGradientColorPicker extends React.Component {
     		.style('top', Height + 'px');
     }.bind(this));
 
-    // refresh color scale
-    var stops = this.state.stops.map(function iterator(s) {
-    	return {
-    		offset: s.offset,
-    		color: s.color
-    	};
-    }).sort(CompareOffset);
-    var offsets = _.map(stops, 'offset');
-    var colors = _.map(stops, 'color');
-    this.colorScale = d3.scale.linear()
-    	.domain(offsets)
-    	.range(colors);
   }
 
   render() {
-  	this.refreshCanvas();
+  	this._refreshCanvas();
 
   	var colorChangeCallback = function colorChangeCallback(color, idx) {
   		var newStops = _.cloneDeep(this.state.stops);
@@ -267,9 +296,7 @@ class ReactGradientColorPicker extends React.Component {
   	}.bind(this);
   	var colorpickers = this.state.stops.map(function iterator(s) {
   		let pickerId = ColorPickerID(this.containerID, s.idx);
-  		let callback = function callback(c) {
-  			colorChangeCallback(c.color, s.idx);
-  		};
+  		let callback = (c) => colorChangeCallback(c.color, s.idx);
   		var style = {
   			left: (s.x - ColorPickerWidth / 2) + 'px',
   			top: Height + 'px'
@@ -287,10 +314,20 @@ class ReactGradientColorPicker extends React.Component {
 	    </div>
     );
   }
+
+  // Publid API:
+  getColorMap() {
+    return this.colorScale;
+  }
+
+  getColorStops() {
+    return this.state.stops;
+  }
 }
 
 ReactGradientColorPicker.propTypes = {
 	stops: React.PropTypes.arrayOf(React.PropTypes.object),
+  colorSpace: React.PropTypes.string,
 	onChange: React.PropTypes.func,
 	width: React.PropTypes.number
 };
