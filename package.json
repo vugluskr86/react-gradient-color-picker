@@ -3,7 +3,7 @@
   "description": "react gradient color picker",
   "author": "Javid Hsueh",
   "user": "javidhsueh",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "scripts": {
     "start": "webpack-dev-server",
     "test": "karma start",
