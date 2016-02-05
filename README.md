@@ -40,6 +40,14 @@ It only triggers when the stop color changes or end of dragging the handlers.
 ### width {number}
 The width of the component.
 
+## API
+### getColorStops
+return an array of color stops
+
+### getColorMap
+return a D3 color scale function.
+
+
 ## Highlighting Demo
 
 ```js
@@ -52,9 +60,11 @@ render() {
 		{offset: 0.5, color: '#fff'},
 		{offset: 1.0, color: '#0f0'}
 	];
-	var onChangeCallback = function onChangeCallback(colorMap) {
-  		// var mappedColor = colorMap(0.8);
-  		// console.log(mappedColor);
+	var onChangeCallback = function onChangeCallback(colorStops, colorMap) {
+  		// colorStops: an array of color stops
+      	// colorMap: a d3 linear scale function
+      	// how to get the mapped color:
+      	// var mappedColor = colorMap(0.8);
   	}
 	return (
 		<div style={style}>

@@ -5,8 +5,8 @@ export default class Demo extends React.Component {
 
   render() {
   	var style = {
-  		width: '300px',
-  		height: '300px'
+  		width: '800px',
+  		height: '200px'
   	};
   	var stops = [
   		{offset: 0.0, color: '#f00'},
@@ -21,26 +21,32 @@ export default class Demo extends React.Component {
   	}
     return (
     	<div style={style}>
-        <p>HSL</p>
-	    	<ReactGradientColorPicker 
-          colorSpace="HSL"
-          onChange={onChangeCallback}
-          stops={stops} />
-        <p>HCL</p>
-        <ReactGradientColorPicker 
-          colorSpace="HCL"
-          onChange={onChangeCallback}
-          stops={stops} />
-        <p>Lab</p>
-        <ReactGradientColorPicker 
-          colorSpace="Lab"
-          onChange={onChangeCallback}
-          stops={stops} />
-        <p>RGB</p>
-        <ReactGradientColorPicker 
-          colorSpace="RGB"
-          onChange={onChangeCallback}
-          stops={stops} />
+
+        <div className="left halfWidth"> 
+          <p>HSL</p>
+          <ReactGradientColorPicker 
+            colorSpace="HSL"
+            onChange={onChangeCallback}
+            stops={stops} />
+          <p>HCL</p>
+          <ReactGradientColorPicker 
+            colorSpace="HCL"
+            onChange={onChangeCallback}
+            stops={stops} />
+
+        </div>
+        <div className="right halfWidth"> 
+          <p>Lab</p>
+          <ReactGradientColorPicker 
+            colorSpace="Lab"
+            onChange={onChangeCallback}
+            stops={stops} />
+          <p>RGB</p>
+          <ReactGradientColorPicker 
+            colorSpace="RGB"
+            onChange={onChangeCallback}
+            stops={stops} />
+        </div>
 	    </div>
     );
   }

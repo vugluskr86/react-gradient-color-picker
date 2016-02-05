@@ -87,3 +87,14 @@ article .description {
 article .description h2 {
     margin: 0;
 }
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+
+.halfWidth {
+    width: 40%;
+    margin: 30px;
+}

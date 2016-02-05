@@ -303,7 +303,8 @@ class ReactGradientColorPicker extends React.Component {
   		}
   		return (
   			<div className="gc-colorpicker" id={pickerId} key={pickerId} style={style} >
-  				<ColorPicker animation="slide-up" color={s.color} onChange={callback}/>
+  				<ColorPicker animation="slide-up" color={s.color}
+            onChange={callback} placement="bottomLeft" />
   			</div>
   		);
   	}.bind(this));
