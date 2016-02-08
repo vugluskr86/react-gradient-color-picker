@@ -291,7 +291,7 @@ class ReactGradientColorPicker extends React.Component {
 
 	    // notify change
 	    if (this.props.onChange) {
-	  		this.props.onChange(this.colorScale);	
+	  		this.props.onChange(this.state.stops, this.colorScale);	
 	  	}
   	}.bind(this);
   	var colorpickers = this.state.stops.map(function iterator(s) {
