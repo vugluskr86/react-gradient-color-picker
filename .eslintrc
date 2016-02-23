@@ -1,5 +1,5 @@
 {
-  "parser": "babel-eslint",
+  "extends": "eslint:recommended",
   "env": {
     "browser": true,
     "node": true,
@@ -11,9 +11,12 @@
   "globals": {
     "jest": false
   },
-  "ecmaFeatures": {
-    "jsx": true,
-    "globalReturn": false
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "sourceType": "module"
   },
   "rules": {
     "no-underscore-dangle": 0,

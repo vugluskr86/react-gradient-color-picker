@@ -1,16 +1,15 @@
-import fs from 'fs';
-import path from 'path';
+import * as path from 'path';
 
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import SystemBellPlugin from 'system-bell-webpack-plugin';
-import Clean from 'clean-webpack-plugin';
+import CleanPlugin from 'clean-webpack-plugin';
 import merge from 'webpack-merge';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
-import MTRC from 'markdown-to-react-components';
 
+import renderJSX from './lib/render.jsx';
 import App from './demo/App.jsx';
 import pkg from './package.json';
 
@@ -34,6 +33,14 @@ const CSS_PATHS = [
   path.join(ROOT_PATH, 'node_modules/highlight.js/styles/github.css'),
   path.join(ROOT_PATH, 'node_modules/react-ghfork/gh-fork-ribbon.ie.css'),
   path.join(ROOT_PATH, 'node_modules/react-ghfork/gh-fork-ribbon.css')
+];
+const STYLE_ENTRIES = [
+  'purecss',
+  'highlight.js/styles/github.css',
+  'react-ghfork/gh-fork-ribbon.ie.css',
+  'react-ghfork/gh-fork-ribbon.css',
+  './demo/main.css',
+  './style.css'
 ];
 
 process.env.BABEL_ENV = TARGET;
@@ -79,15 +86,19 @@ const demoCommon = {
 if (TARGET === 'start') {
   module.exports = merge(demoCommon, {
     devtool: 'eval-source-map',
-    entry: config.paths.demo,
+    entry: {
+      demo: [config.paths.demo].concat(STYLE_ENTRIES)
+    },
     plugins: [
       new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify('development')
+        'process.env.NODE_ENV': '"development"'
       }),
-      new HtmlWebpackPlugin({
+      new HtmlWebpackPlugin(Object.assign({}, {
         title: pkg.name + ' - ' + pkg.description,
-        templateContent: renderJSX
-      }),
+        template: 'lib/index_template.ejs',
+
+        inject: false
+      }, renderJSX(__dirname, pkg))),
       new webpack.HotModuleReplacementPlugin()
     ],
     module: {
@@ -99,7 +110,7 @@ if (TARGET === 'start') {
         },
         {
           test: /\.jsx?$/,
-          loaders: ['babel'],
+          loaders: ['babel?cacheDirectory'],
           include: [
             config.paths.demo,
             config.paths.src
@@ -119,13 +130,36 @@ if (TARGET === 'start') {
   });
 }
 
-if (TARGET === 'gh-pages' || TARGET === 'deploy-gh-pages') {
+function NamedModulesPlugin(options) {
+  this.options = options || {};
+}
+NamedModulesPlugin.prototype.apply = function(compiler) {
+  compiler.plugin('compilation', function(compilation) {
+    compilation.plugin('before-module-ids', function(modules) {
+      modules.forEach(function(module) {
+        if(module.id === null && module.libIdent) {
+          var id = module.libIdent({
+            context: this.options.context || compiler.options.context
+          });
+
+          // Skip CSS files since those go through ExtractTextPlugin
+          if(!id.endsWith('.css')) {
+            module.id = id;
+          }
+        }
+      }, this);
+    }.bind(this));
+  }.bind(this));
+};
+
+if (TARGET === 'gh-pages' || TARGET === 'gh-pages:stats') {
   module.exports = merge(demoCommon, {
     entry: {
       app: config.paths.demo,
       vendors: [
         'react'
-      ]
+      ],
+      style: STYLE_ENTRIES
     },
     output: {
       path: './gh-pages',
@@ -133,19 +167,22 @@ if (TARGET === 'gh-pages' || TARGET === 'deploy-gh-pages') {
       chunkFilename: '[chunkhash].js'
     },
     plugins: [
-      new Clean(['gh-pages']),
-      new ExtractTextPlugin('styles.[chunkhash].css'),
+      new CleanPlugin(['gh-pages'], {
+        verbose: false
+      }),
+      new ExtractTextPlugin('[name].[chunkhash].css'),
       new webpack.DefinePlugin({
-          // This has effect on the react lib size
-        'process.env.NODE_ENV': JSON.stringify('production')
+          // This affects the react lib size
+        'process.env.NODE_ENV': '"production"'
       }),
-      new HtmlWebpackPlugin({
+      new HtmlWebpackPlugin(Object.assign({}, {
         title: pkg.name + ' - ' + pkg.description,
-        templateContent: renderJSX.bind(
-          null,
-          RENDER_UNIVERSAL ? ReactDOM.renderToString(<App />) : ''
-        )
-      }),
+        template: 'lib/index_template.ejs',
+        inject: false
+      }, renderJSX(
+        __dirname, pkg, RENDER_UNIVERSAL ? ReactDOM.renderToString(<App />) : '')
+      )),
+      new NamedModulesPlugin(),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -155,8 +192,6 @@ if (TARGET === 'gh-pages' || TARGET === 'deploy-gh-pages') {
       new webpack.optimize.CommonsChunkPlugin({
         names: ['vendors', 'manifest']
       })
-      // XXX: glitchy still
-      //new webpack.NamedModulesPlugin()
     ],
     module: {
       loaders: [
@@ -179,7 +214,7 @@ if (TARGET === 'gh-pages' || TARGET === 'deploy-gh-pages') {
 }
 
 // !TARGET === prepush hook for test
-if (TARGET === 'test' || TARGET === 'tdd' || !TARGET) {
+if (TARGET === 'test' || TARGET === 'test:tdd' || !TARGET) {
   module.exports = merge(demoCommon, {
     module: {
       preLoaders: [
@@ -194,7 +229,7 @@ if (TARGET === 'test' || TARGET === 'tdd' || !TARGET) {
       loaders: [
         {
           test: /\.jsx?$/,
-          loaders: ['babel'],
+          loaders: ['babel?cacheDirectory'],
           include: [
             config.paths.src,
             config.paths.tests
@@ -243,7 +278,7 @@ if (TARGET === 'dist') {
   });
 }
 
-if (TARGET === 'dist-min') {
+if (TARGET === 'dist:min') {
   module.exports = merge(distCommon, {
     output: {
       filename: config.filename + '.min.js'
@@ -255,26 +290,5 @@ if (TARGET === 'dist-min') {
         }
       })
     ]
-  });
-}
-
-function renderJSX(demoTemplate, templateParams, compilation) {
-  demoTemplate = demoTemplate || '';
-
-  var tpl = fs.readFileSync(path.join(__dirname, 'lib/index_template.tpl'), 'utf8');
-  var readme = fs.readFileSync(path.join(__dirname, 'README.md'), 'utf8');
-  var replacements = {
-    name: pkg.name,
-    description: pkg.description,
-    demo: demoTemplate,
-    documentation: ReactDOM.renderToStaticMarkup(
-      <div key="documentation">{MTRC(readme).tree}</div>
-    )
-  };
-
-  return tpl.replace(/%(\w*)%/g, function(match) {
-    var key = match.slice(1, -1);
-
-    return typeof replacements[key] === 'string' ? replacements[key] : match;
   });
 }
