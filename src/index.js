@@ -304,7 +304,6 @@ class ReactGradientColorPicker extends React.Component {
                 .style('left', (s.x - ColorPickerWidth / 2) + 'px')
                 .style('top', Height + 'px');
         }.bind(this));
-        console.log(this.getColorStops());
     }
 
     render() {
