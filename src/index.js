@@ -19,9 +19,9 @@ const ColorSpaces = {
 };
 
 const DefaultStops = [
-    { offset: 0.0, color: '#00f' },
-    { offset: 0.5, color: '#0f0' },
-    { offset: 1.0, color: '#f00' }
+    { offset: 0.0, color: '#00f', opacity: 1.0 },
+    { offset: 0.5, color: '#0f0', opacity: 0.5 },
+    { offset: 1.0, color: '#f00', opacity: 1.0 }
 ];
 
 const CompareOffset = function CompareOffset(a, b) {
@@ -51,7 +51,8 @@ class ReactGradientColorPicker extends React.Component {
                 idx: idx,
                 x: rootWidth * stop.offset,
                 offset: stop.offset,
-                color: stop.color
+                color: stop.color,
+                opacity: stop.opacity
             }
         });
 
@@ -82,13 +83,26 @@ class ReactGradientColorPicker extends React.Component {
             idx: this.state.stops.length,
             x: mouseX,
             offset: offset,
-            color: midColor
+            color: midColor,
+            opacity: 1.0
         };
         var newStops = this.state.stops.concat([newStop]);
         newStops.sort(CompareOffset);
         this.setState({ stops: newStops });
 
         this._notifyChange();
+    }
+    _removeHandler(idx) {
+        const {stops: oldStops} = this.state;
+        const stopIdx = _.findIndex(this.state.stops, {idx});
+        if (stopIdx !== -1) {
+            this.setState({
+                stops: [
+                    ...oldStops.slice(0, stopIdx),
+                    ...oldStops.slice(stopIdx + 1)
+                ]
+            });
+        }        
     }
 
     _dragHandler(d, mouseX, colorPickerID) {
@@ -186,17 +200,25 @@ class ReactGradientColorPicker extends React.Component {
         var stops = this.state.stops.map(function iterator(s) {
             return {
                 offset: s.offset,
-                color: s.color
+                color: s.color,
+                opacity: s.opacity
             };
         }).sort(CompareOffset);
         var offsets = _.map(stops, 'offset');
         var colors = _.map(stops, 'color');
+        var opacity = _.map(stops, 'opacity');
+
         this.colorScale = d3.scale.linear()
             .domain(offsets)
             .range(colors)
             .interpolate(ColorSpaces[this.state.colorSpace]);
 
+        this.opacityScale = d3.scale.linear()
+            .domain(offsets)
+            .range(opacity);
+
         var _localColorScale = this.colorScale;
+        var _localOpacityScale = this.opacityScale;
 
         this.colorMap
             .attr('width', rootWidth)
@@ -205,12 +227,13 @@ class ReactGradientColorPicker extends React.Component {
         this.canvas.each(function renderCanvas() {
                 var context = this.getContext('2d'),
                     image = context.createImageData(rootWidth, 1);
-                for (var i = 0, j = -1, c; i < rootWidth; ++i) {
+                for (var i = 0, j = -1, c, a; i < rootWidth; ++i) {
                     c = d3.rgb(_localColorScale(i * 1.0 / rootWidth));
+                    a = _localOpacityScale(i * 1.0 / rootWidth);
                     image.data[++j] = c.r;
                     image.data[++j] = c.g;
                     image.data[++j] = c.b;
-                    image.data[++j] = 255;
+                    image.data[++j] = a*255;
                 }
                 context.putImageData(image, 0, 0);
             })
@@ -281,16 +304,17 @@ class ReactGradientColorPicker extends React.Component {
                 .style('left', (s.x - ColorPickerWidth / 2) + 'px')
                 .style('top', Height + 'px');
         }.bind(this));
-
+        console.log(this.getColorStops());
     }
 
     render() {
         this._refreshCanvas();
 
-        var colorChangeCallback = function colorChangeCallback(color, idx) {
+        var colorChangeCallback = function colorChangeCallback(color, opacity, idx) {
             var newStops = _.cloneDeep(this.state.stops);
             var currentHandler = _.find(newStops, { 'idx': idx });
             currentHandler.color = color;
+            currentHandler.opacity = 1.0 * opacity / 100;
             this.setState({ stops: newStops });
 
             // notify change
@@ -300,20 +324,25 @@ class ReactGradientColorPicker extends React.Component {
         }.bind(this);
         var colorpickers = this.state.stops.map(function iterator(s) {
             let pickerId = ColorPickerID(this.containerID, s.idx);
-            let callback = (c) => colorChangeCallback(c.color, s.idx);
+            let removeCallback = () => this._removeHandler(s.idx);
+            let callback = (c) => colorChangeCallback(c.color, c.alpha, s.idx);
             var style = {
                 left: (s.x - ColorPickerWidth / 2) + 'px',
                 top: Height + 'px'
             }
-            return ( < div className = "gc-colorpicker"
-                id = { pickerId }
-                key = { pickerId }
-                style = { style } >
-                < ColorPicker animation = "slide-up"
-                color = { s.color }
-                onChange = { callback }
-                placement = "bottomLeft" / >
-                < /div>
+            return ( 
+                <div className = "gc-colorpicker" style = { style }>
+                    < div id = { pickerId }
+                        key = { pickerId } >
+                        < ColorPicker animation = "slide-up"
+                        color = { s.color }
+                        alpha = {s.opacity * 100}
+                        onChange = { callback }
+                        placement = "bottomLeft" / >
+                    < /div>
+                    <div className = "remove-btn"
+                        onClick = {removeCallback}> x </div>
+                </div>
             );
         }.bind(this));
         return ( < div className = "gc-container"

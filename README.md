@@ -23,9 +23,9 @@ npm install --save react-gradient-color-picker
 ### stops {array} default: 
 ```js
 [
-	{offset: 0.0, color: '#f00'},
-	{offset: 0.5, color: '#fff'},
-	{offset: 1.0, color: '#0f0'}
+	{offset: 0.0, color: '#f00', opacity: 1.0},
+	{offset: 0.5, color: '#fff', opacity: 1.0},
+	{offset: 1.0, color: '#0f0', opacity: 1.0}
 ]
 ```
 
@@ -56,9 +56,9 @@ render() {
 		width: '300px'
 	};
 	var stops = [
-		{offset: 0.0, color: '#f00'},
-		{offset: 0.5, color: '#fff'},
-		{offset: 1.0, color: '#0f0'}
+		{offset: 0.0, color: '#f00', opacity: 1.0},
+		{offset: 0.5, color: '#fff', opacity: 1.0},
+		{offset: 1.0, color: '#0f0', opacity: 1.0}
 	];
 	var onChangeCallback = function onChangeCallback(colorStops, colorMap) {
   		// colorStops: an array of color stops

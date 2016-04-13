@@ -9,9 +9,9 @@ export default class Demo extends React.Component {
       height: '200px'
     };
     var stops = [
-      {offset: 0.0, color: '#f00'},
-      {offset: 0.5, color: '#0f0'},
-      {offset: 1.0, color: '#00f'}
+      {offset: 0.0, color: '#f00', opacity: 1.0},
+      {offset: 0.5, color: '#0f0', opacity: 0.5},
+      {offset: 1.0, color: '#00f', opacity: 0.1}
     ];
     /* eslint-disable no-unused-vars */
     var onChangeCallback = function onChangeCallback(colorStops, colorMap) {
