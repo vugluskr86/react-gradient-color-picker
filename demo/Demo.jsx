@@ -29,13 +29,13 @@ export default class Demo extends React.Component {
             colorSpace="HSL"
             onChange={onChangeCallback}
             stops={stops}
-            width="350" />
+            width={350} />
           <p>HCL</p>
           <ReactGradientColorPicker 
             colorSpace="HCL"
             onChange={onChangeCallback}
             stops={stops}
-            width="350" />
+            width={350} />
 
         </div>
         <div className="right halfWidth"> 
@@ -44,13 +44,13 @@ export default class Demo extends React.Component {
             colorSpace="Lab"
             onChange={onChangeCallback}
             stops={stops}
-            width="350" />
+            width={350} />
           <p>RGB</p>
           <ReactGradientColorPicker 
             colorSpace="RGB"
             onChange={onChangeCallback}
             stops={stops}
-            width="350" />
+            width={350} />
         </div>
       </div>
     );

@@ -330,7 +330,7 @@ class ReactGradientColorPicker extends React.Component {
                 top: Height + 'px'
             }
             return ( 
-                <div className = "gc-colorpicker" style = { style }>
+                <div key={ pickerId } className = "gc-colorpicker" style = { style }>
                     < div id = { pickerId }
                         key = { pickerId } >
                         < ColorPicker animation = "slide-up"
