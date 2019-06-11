@@ -1,7 +1,7 @@
 'use strict';
 
 import _ from 'lodash';
-import ColorPicker from 'react-colors-picker';
+import ColorPicker from 'rc-color-picker';
 import d3 from 'd3';
 import React from 'react';
 
