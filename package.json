@@ -12,9 +12,16 @@
     "gh-pages": "webpack",
     "gh-pages:deploy": "gh-pages -d gh-pages",
     "gh-pages:stats": "webpack --profile --json > stats.json",
-    "dist": "webpack"
+    "dist": "webpack",
+    "dist:min": "webpack",
+    "dist:modules": "babel src --out-dir dist-modules",
+    "pretest": "npm run test:lint",
+    "preversion": "npm run test && npm run dist && npm run dist:min && git commit --allow-empty -am \"Update dist\"",
+    "prepublish": "npm run dist:modules",
+    "postpublish": "npm run gh-pages && npm run gh-pages:deploy",
+    "postinstall": "node lib/post_install.js"
   },
-  "main": "src/index.js",
+  "main": "dist-modules",
   "dependencies": {
     "d3": "^3.5.12",
     "lodash": "^3.10.1",
